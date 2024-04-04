@@ -11,37 +11,27 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
-            background-color: blue;
+            background-color: #007bff;
             color: white;
-            border-radius: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
-        #profileButton, #searchButton, #settingsButton {
-            position: absolute;
-            top: 10px;
-        }
-
-        #profileButton {
-            left: 10px;
-        }
-
-        #searchButton {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        #settingsButton {
-            right: 10px;
+        .button:hover {
+            background-color: #0056b3;
         }
 
         #blogView {
             margin-top: 50px;
         }
 
-        #postButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .post {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 15px; /* 角をより丸く */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
+            background-color: #f9f9f9; /* 背景色を薄く設定 */
         }
 
         #postScreen {
@@ -50,51 +40,54 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 50%; /* 幅を設定 */
-            max-width: 500px; /* 最大幅を設定 */
-            min-height: 200px; /* 最小の高さを設定 */
+            width: 60%;
+            max-width: 500px;
+            min-height: 200px;
             background-color: white;
             padding: 20px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 影を追加してポップアップ感を出す */
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 1000;
-            overflow: auto; /* コンテンツがオーバーフローしたらスクロール可能にする */
+            overflow: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        <button id="profileButton" class="button">プロフィール</button>
+         <button id="postButton" class="button">投稿</button>
         <button id="searchButton" class="button">検索</button>
         <button id="settingsButton" class="button">設定</button>
     </header>
     
     <div id="blogView">
-        <?php
-$date1 = new DateTime()
-?>
-
-        
-        <!-- 投稿一覧を表示するセクション -->
         @foreach ($posts as $post)
-            <div>
+            <div class="post">
                 <h2>{{ $post->title }}</h2>
                 <p>{{ $post->body }}</p>
-             
-                <!-- 締め切り日時の表示と判定 -->
                 @if (!is_null($post->deadline))
-                    @if (new DateTime() > new DateTime($post->deadline))
-                        <p>この投稿は締め切りを過ぎています。</p>
-                    @else
-                        <p>締め切りまであと{{ (new DateTime($post->deadline))->diff(new DateTime())->format('%a 日 %h 時間 %i 分') }}</p>
-                    @endif
+                    @php
+                        $deadline = new DateTime($post->deadline);
+                        $now = new DateTime();
+                        if ($now > $deadline) {
+                            echo '<p>この投稿は締め切りを過ぎています。</p>';
+                        } else {
+                            $interval = $now->diff($deadline);
+                            echo '<p>締め切りまであと ' . $interval->format('%a 日 %h 時間 %i 分') . '</p>';
+                        }
+                    @endphp
                 @endif
             </div>
         @endforeach
     </div>
 
-    <button id="postButton" class="button">投稿</button>
+    
 
     <div id="postScreen"></div>
 
@@ -103,13 +96,11 @@ $date1 = new DateTime()
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var formHtml = '<form action="{{ route('posts.store') }}" method="post">' +
                             '<input type="hidden" name="_token" value="' + csrfToken + '">' +
-                            '<input type="text" name="title" placeholder="タイトルを入力"><br>' +
-                            '<textarea name="content" placeholder="ここに内容を入力"></textarea><br>' +
-                             {{-- 締め切り日時入力フィールドを追加 --}}
-                            '<label for="deadline">Deadline:</label><br>'+
-                            '<input type="datetime-local" id="deadline" name="deadline"><br>'+
+                            '<input type="text" name="title" placeholder="タイトルを入力"　required><br>' +
+                            '<textarea name="content" placeholder="ここに内容を入力" required></textarea><br>' +
+                            '<label for="deadline">Deadline:</label><br>' +
+                            '<input type="datetime-local" id="deadline" name="deadline"><br>' +
                             '<button type="submit" class="button">送信</button>' +
-                             
                             '</form>';
 
             var postScreen = document.getElementById('postScreen');
@@ -119,5 +110,3 @@ $date1 = new DateTime()
     </script>
 </body>
 </html>
-
-
