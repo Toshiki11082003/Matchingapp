@@ -7,12 +7,23 @@
 </head>
 <body>
     <h1>Create New Post</h1>
-    <form action="{{ route('posts.store') }}" method="POST">
+    <form action="{{ route('posts.store') }}" method="post">
         @csrf
-        <label for="title">Title:</label><br>
-        <input type="text" id="title" name="title" required><br>
-        <label for="content">Content:</label><br>
-        <textarea id="content" name="content" required></textarea><br>
+         <div class="title">
+            <h2>Title</h2>
+            <input type="text" name="post[title]" placeholder="タイトル" value="{{ old('post.title') }}"/>
+            <p class="title__error" style="color:red">{{ $errors->first('post.title') }}</p>
+        </div>
+        <div class="body">
+            <h2>Body</h2>
+            <textarea name="post[body]" placeholder="今日も1日お疲れさまでした。">{{ old('post.body') }}</textarea>
+            <p class="body__error" style="color:red">{{ $errors->first('post.body') }}</p>
+        <div>
+
+        {{-- 締め切り日時入力フィールドを追加 --}}
+        <label for="deadline">Deadline:</label><br>
+        <input type="datetime-local" id="deadline" name="deadline"><br>
+        
         <button type="submit">Submit</button>
     </form>
 </body>

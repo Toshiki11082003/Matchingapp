@@ -75,19 +75,19 @@
 $date1 = new DateTime()
 ?>
 
-{{dd(time())}}
         
         <!-- 投稿一覧を表示するセクション -->
         @foreach ($posts as $post)
             <div>
                 <h2>{{ $post->title }}</h2>
                 <p>{{ $post->body }}</p>
+             
                 <!-- 締め切り日時の表示と判定 -->
                 @if (!is_null($post->deadline))
                     @if (new DateTime() > new DateTime($post->deadline))
                         <p>この投稿は締め切りを過ぎています。</p>
                     @else
-                        <p>締め切りまであと{{ (new DateTime($post->deadline))->diff(new DateTime())->format('%a 日') }}</p>
+                        <p>締め切りまであと{{ (new DateTime($post->deadline))->diff(new DateTime())->format('%a 日 %h 時間 %i 分') }}</p>
                     @endif
                 @endif
             </div>
@@ -105,7 +105,11 @@ $date1 = new DateTime()
                             '<input type="hidden" name="_token" value="' + csrfToken + '">' +
                             '<input type="text" name="title" placeholder="タイトルを入力"><br>' +
                             '<textarea name="content" placeholder="ここに内容を入力"></textarea><br>' +
+                             {{-- 締め切り日時入力フィールドを追加 --}}
+                            '<label for="deadline">Deadline:</label><br>'+
+                            '<input type="datetime-local" id="deadline" name="deadline"><br>'+
                             '<button type="submit" class="button">送信</button>' +
+                             
                             '</form>';
 
             var postScreen = document.getElementById('postScreen');

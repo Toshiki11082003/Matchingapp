@@ -31,5 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// 認証関連のルート定義 (Laravel Breeze, Laravel Jetstreamなどの認証スケルトンを使用している場合)
+// 認証関連のルート定義
 require __DIR__.'/auth.php';
+

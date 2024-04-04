@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Http\Requests\PostRequest;
+use Carbon\Carbon;
+use DateTime;
 
 class PostController extends Controller
 {
@@ -19,19 +22,26 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
+    
     {
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
-
+    
+    
+         
         $post = new Post();
         $post->title = $request->title;
         $post->body = $request->content;
+        $date_test = Carbon::createFromFormat('Y-m-d\TH:i', $request->deadline)->format('Y-m-d H:i:s');
+        $post->deadline =$date_test;
         $post->save();
 
+    
         return redirect('/')->with('success', '投稿が成功しました！');
-    }
+    }  
+
 
     public function show($id)
     {
