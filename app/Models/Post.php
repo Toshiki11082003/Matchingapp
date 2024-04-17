@@ -13,4 +13,9 @@ class Post extends Model
     // Mass Assignmentの対象となる属性
     protected $fillable = ['title', 'body', 'deadline'];
 
+    // ユーザーとのリレーションを定義
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
