@@ -37,97 +37,93 @@
         #postScreen {
             display: none;
             position: fixed;
-            top: 50%;
+            top: 10%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60%;
-            max-width: 500px;
-            min-height: 200px;
+            transform: translate(-50%, 0%);
+            width: 80%;
+            max-width: 800px;
+            min-height: 400px;
             background-color: white;
-            padding: 20px;
+            padding: 30px;
             border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 1000;
             overflow: auto;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
+        #closeButton {
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        form > div {
+            margin-bottom: 10px; /* Spacing between form sections */
         }
     </style>
 </head>
 <body>
     <header>
         <button id="postButton" class="button">投稿</button>
-        <button id="searchButton" class="button">検索</button>
-        <button id="settingsButton" class="button">設定</button>
+        <a href="/rooms" class="button">メッセージ一覧 </a>
     </header>
     
     <div id="blogView">
         @foreach ($posts as $post)
             <div class="post">
                 <h2>{{ $post->title }}</h2>
-                <p>{{ $post->body }}</p>
-
-                <!-- チャットリンク追加、自分自身の投稿でも表示 -->
+                <p>大学名: {{ $post->university_name }}</p>
+                <p>サークル名: {{ $post->circle_name }}</p>
+                <p>サークルの種類: {{ $post->circle_type }}</p>
+                <p>開催場所: {{ $post->event_location }}</p>
+                <p>締め切り: {{ $post->deadline ? $post->deadline->format('Y-m-d H:i') : '未設定' }}</p>
+                <p>イベント開催日時: {{ $post->event_date ? $post->event_date->format('Y-m-d H:i') : '未設定' }}</p>
+                <p>追加情報: {{ $post->free_text }}</p>
                 @if ($post->user)
-                    <!-- チャットページへのリンクを持たせる -->
-                    @if (auth()->user()->id == $post->user->id)
-                        <button onclick="location.href='/chat/{{ $post->user->id }}'" class="button">DM</button>
-                    @else
-                        <!-- 他のユーザーの投稿の場合、チャットボタンを表示 -->
-                        <a href="/chat/{{ $post->user->id }}">{{ $post->user->name }}チャットする</a>
-                    @endif
-                @else
-                    <p>ユーザー情報がありません</p>
+                    <a href="/chat/{{ $post->user->id}}">チャットする</a>
                 @endif
-
-                <!-- 締め切り表示 -->
-                @if (!is_null($post->deadline))
-                    @php
-                        $deadline = new DateTime($post->deadline);
-                        $now = new DateTime();
-                        if ($now > $deadline) {
-                            echo '<p>この投稿は締め切りを過ぎています。</p>';
-                        } else {
-                            $interval = $now->diff($deadline);
-                            echo '<p>締め切りまであと ' . $interval->format('%a 日 %h 時間 %i 分') . '</p>';
-                        }
-                    @endphp
-                @endif
-
-                <!-- 削除ボタン -->
                 <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
                 </form>
-                
-                
             </div>
         @endforeach
     </div>
 
-    <div id="postScreen"></div>
+    <div id="postScreen">
+        <button id="closeButton">閉じる</button>
+    </div>
 
     <script>
         document.getElementById('postButton').addEventListener('click', function() {
+            var postScreen = document.getElementById('postScreen');
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             var formHtml = '<form action="{{ route('posts.store') }}" method="post">' +
-                            '<input type="hidden" name="_token" value="' + csrfToken + '">' +
-                            '<input type="text" name="title" placeholder="タイトルを入力" required><br>' +
-                            '<textarea name="content" placeholder="ここに内容を入力" required></textarea><br>' +
-                            '<label for="deadline">Deadline:</label><br>' +
-                            '<input type="datetime-local" id="deadline" name="deadline"><br>' +
-                            '<button type="submit" class="button">送信</button>' +
-                            '</form>';
+                '<input type="hidden" name="_token" value="' + csrfToken + '">' +
+                '<div><label>タイトル:</label><input type="text" name="title" placeholder="" required></div>' +
+                '<div>大学名：<input type="text" name="university_name" required></div>' +
+                '<div>サークル名：<input type="text" name="circle_name" required></div>' +
+                '<div>サークルの種類：<input type="text" name="circle_type" required></div>' +
+                '<div>開催場所：<input type="text" name="event_location" required></div>' +
+                '<div>締め切り：<input type="datetime-local" name="deadline" required></div>' +
+                '<div>開催日時：<input type="datetime-local" name="event_date" required></div>' +
+                '<div>自由記述：<textarea name="free_text" placeholder="追加情報があればこちらに記入してください"></textarea></div>' +
+                '<div><button type="submit" class="button">送信</button></div>' +
+                '</form>';
 
-            var postScreen = document.getElementById('postScreen');
-            postScreen.innerHTML = formHtml;
+            postScreen.innerHTML = '<button id="closeButton">閉じる</button>' + formHtml; // Ensure the closeButton is inside postScreen
             postScreen.style.display = 'block';
+            document.getElementById('closeButton').addEventListener('click', function() {
+                postScreen.style.display = 'none';
+            });
         });
     </script>
 </body>

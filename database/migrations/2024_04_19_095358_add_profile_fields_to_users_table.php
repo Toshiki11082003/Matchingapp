@@ -1,9 +1,10 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDeadlineToPostsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +13,9 @@ class AddDeadlineToPostsTable extends Migration
      */
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            if (!Schema::hasColumn('posts', 'deadline')) {
-                $table->dateTime('deadline')->nullable();
-            }
+         Schema::table('users', function (Blueprint $table) {
+        $table->string('profile_photo')->nullable();
+        $table->text('bio')->nullable();
         });
     }
 
@@ -26,8 +26,8 @@ class AddDeadlineToPostsTable extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('deadline');
+        Schema::table('users', function (Blueprint $table) {
+            //
         });
     }
-}
+};
