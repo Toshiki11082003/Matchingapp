@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,14 +21,13 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::post('/posts/{post}/like', [PostController::class, 'storeLike'])->name('posts.like');
 });
-
+    
+Route::middleware(['auth'])->group(function(){
 // ChatControllerに関連するルート定義
 //Route::get('/chat/{post}/{user}', [ChatController::class, 'openChat']);
-Route::post('/chat', [ChatController::class, 'sendMessage']);
-Route::get('/chat/{post}/{user}', [ChatController::class, 'openChat']);
-
-// カテゴリーに関連するルート定義
-Route::get('/categories/{category}', [CategoryController::class, 'index'])->middleware("auth");
+    Route::post('/chat', [ChatController::class, 'sendMessage']);
+    Route::get('/chat/{user}', [ChatController::class, 'openChat']);
+});
 
 // プロファイル編集に関連するルートのグループ定義
 Route::middleware('auth')->group(function () {
@@ -37,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/rooms', [ChatController::class, 'index']);
 
 // 認証関連のルート定義
 require __DIR__.'/auth.php';

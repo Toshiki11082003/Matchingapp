@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title', 255); // タイトルの最大文字数を調整
-            $table->text('body'); // 本文はtext型に変更し、文字数制限を外す
             $table->string('university_name', 255); // 大学名を追加
             $table->string('circle_name', 255); // サークル名を追加
             //$table->string('circle_type', 255); // サークルの種類を追加

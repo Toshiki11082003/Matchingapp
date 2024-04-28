@@ -9,7 +9,7 @@
     @foreach ($posts as $post)
         <div>
             <h2>{{ $post->title }}</h2>
-            <p>{{ $post->body }}</p> <!-- 本文を表示 -->
+            <p>{{ $post->body }}</p>
             <p>大学名: {{ $post->university_name }}</p>
             <p>サークル名: {{ $post->circle_name }}</p>
             <p>サークルの種類: {{ $post->circle_type }}</p>

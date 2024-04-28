@@ -15,9 +15,9 @@
                          onsubmitの設定の最後に"return false;"を追加。
                          (return false;の結果として、submitが中断され、ページリロードは行われない。）--}}
                     <form method="post" onsubmit="onsubmit_Form(); return false;">
+                        @csrf
                         メッセージ : <input type="text" id="input_message" autocomplete="off" />
                         <input type="hidden" id="chat_id" name="chat_id" value={{ $chat->id }}> 
-                        <input type="hidden" id="post_id" name="post_id" value={{ $postId}}>
                         <button type="submit" class="text-white bg-blue-700 px-5 py-2">送信</button>
                         
                     </form>
@@ -38,7 +38,7 @@
 <script>
         const elementInputMessage = document.getElementById( "input_message" );
         const chatId = document.getElementById("chat_id").value;
-        const postId = document.getElementById("post_id").value;
+        console.log("chatid",chatId)
         //const jsonDate = JSON.parse(json)
         
         {{-- formのsubmit処理 --}}
@@ -53,8 +53,7 @@
             }
             params = { 
                 'message': strMessage,
-                'chat_id': chatId,
-                'post_id': postId
+                'chat_id': chatId
             };
             
             {{-- POSTリクエスト送信処理とレスポンス取得処理 --}}
@@ -78,9 +77,12 @@
             const elementListMessage = document.getElementById("list_message");
             console.log(3)
             
+            
+            
             // Listen開始と、イベント発生時の処理の定義
             window.Echo.private('chat').listen('MessageSent', (e) => {
                 console.log(e);
+                console.log("めっせーじをうけとれた");
                 
                 // 受け取ったメッセージのchat_idがこのページのchat_idと一致する場合のみ表示
                 if (e.chat.chat_id === chatId) {

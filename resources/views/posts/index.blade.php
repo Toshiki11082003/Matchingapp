@@ -72,24 +72,22 @@
 <body>
     <header>
         <button id="postButton" class="button">投稿</button>
-        <button id="follwButton" class="button">フォロー一覧</button>
-        <button id="DMButton" class="button">メッセージ一覧</button>
+        <a href="/rooms" class="button">メッセージ一覧 </a>
     </header>
     
     <div id="blogView">
         @foreach ($posts as $post)
             <div class="post">
                 <h2>{{ $post->title }}</h2>
-                <p>{{ $post->body }}</p>
                 <p>大学名: {{ $post->university_name }}</p>
                 <p>サークル名: {{ $post->circle_name }}</p>
                 <p>サークルの種類: {{ $post->circle_type }}</p>
-                <p>イベント開催日時: {{ $post->event_date ? $post->event_date->format('Y-m-d H:i') : '未設定' }}</p>
-                <p>イベント開催場所: {{ $post->event_location }}</p>
-                <p>追加情報: {{ $post->free_text }}</p>
+                <p>開催場所: {{ $post->event_location }}</p>
                 <p>締め切り: {{ $post->deadline ? $post->deadline->format('Y-m-d H:i') : '未設定' }}</p>
+                <p>イベント開催日時: {{ $post->event_date ? $post->event_date->format('Y-m-d H:i') : '未設定' }}</p>
+                <p>追加情報: {{ $post->free_text }}</p>
                 @if ($post->user)
-                    <a href="/chat/{{$post->id}}/{{ $post->user->id }}">チャットする</a>
+                    <a href="/chat/{{ $post->user->id}}">チャットする</a>
                 @endif
                 <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
                     @csrf
@@ -111,7 +109,6 @@
             var formHtml = '<form action="{{ route('posts.store') }}" method="post">' +
                 '<input type="hidden" name="_token" value="' + csrfToken + '">' +
                 '<div><label>タイトル:</label><input type="text" name="title" placeholder="" required></div>' +
-                '<div>本文：<textarea name="body" required></textarea></div>' +
                 '<div>大学名：<input type="text" name="university_name" required></div>' +
                 '<div>サークル名：<input type="text" name="circle_name" required></div>' +
                 '<div>サークルの種類：<input type="text" name="circle_type" required></div>' +

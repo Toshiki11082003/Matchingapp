@@ -12,8 +12,8 @@ class Post extends Model
     
     // Mass Assignmentの対象となる属性
     protected $fillable = [
-    'title', 'body', 'university_name', 'circle_name', 'circle_type',
-    'event_date', 'event_location', 'deadline', 'free_text', 'cost'
+    'title', 'university_name', 'circle_name', 'circle_type',
+    'event_date', 'event_location', 'deadline', 'free_text', //'cost'
     ];
 
 
