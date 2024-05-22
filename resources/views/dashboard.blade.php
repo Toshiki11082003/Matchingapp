@@ -1,8 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Dashboard') }}
+            </h2>
+            <a href="/posts" class="text-sm text-gray-700 underline">投稿一覧に戻る</a> <!-- ここで投稿一覧へのリンクを追加 -->
+        </div>
     </x-slot>
 
     <div class="py-12">

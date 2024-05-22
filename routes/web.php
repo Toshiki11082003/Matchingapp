@@ -27,6 +27,8 @@ Route::middleware(['auth'])->group(function(){
 //Route::get('/chat/{post}/{user}', [ChatController::class, 'openChat']);
     Route::post('/chat', [ChatController::class, 'sendMessage']);
     Route::get('/chat/{user}', [ChatController::class, 'openChat']);
+    //Route::get('/chat/{chatId}', [ChatController::class, 'show']);
+    //Route::post('/chat/message', [PostController::class, 'storeChatMessage'])->name('chat.message.store');
 });
 
 // プロファイル編集に関連するルートのグループ定義
@@ -35,6 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 
 Route::get('/rooms', [ChatController::class, 'index']);
 

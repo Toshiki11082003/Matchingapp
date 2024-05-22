@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- CSRFトークンをメタタグに追加 -->
-    <title>My App</title>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            投稿一覧
+        </h2>
+    </x-slot>
+
     <style>
         .button {
             padding: 10px 20px;
@@ -19,6 +19,29 @@
 
         .button:hover {
             background-color: #0056b3;
+        }
+
+        .chat-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .chat-link:hover {
+            color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
         }
 
         #blogView {
@@ -68,38 +91,45 @@
             margin-bottom: 10px; /* Spacing between form sections */
         }
     </style>
-</head>
-<body>
-    <header>
-        <button id="postButton" class="button">投稿</button>
-        <a href="/rooms" class="button">メッセージ一覧 </a>
-    </header>
-    
-    <div id="blogView">
-        @foreach ($posts as $post)
-            <div class="post">
-                <h2>{{ $post->title }}</h2>
-                <p>大学名: {{ $post->university_name }}</p>
-                <p>サークル名: {{ $post->circle_name }}</p>
-                <p>サークルの種類: {{ $post->circle_type }}</p>
-                <p>開催場所: {{ $post->event_location }}</p>
-                <p>締め切り: {{ $post->deadline ? $post->deadline->format('Y-m-d H:i') : '未設定' }}</p>
-                <p>イベント開催日時: {{ $post->event_date ? $post->event_date->format('Y-m-d H:i') : '未設定' }}</p>
-                <p>追加情報: {{ $post->free_text }}</p>
-                @if ($post->user)
-                    <a href="/chat/{{ $post->user->id}}">チャットする</a>
-                @endif
-                <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
-                </form>
-            </div>
-        @endforeach
-    </div>
 
-    <div id="postScreen">
-        <button id="closeButton">閉じる</button>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <header>
+                        <button id="postButton" class="button">投稿</button>
+                        <a href="/rooms" class="button">メッセージ一覧</a>
+                    </header>
+                    
+                    <div id="blogView">
+                        @foreach ($posts as $post)
+                            <div class="post">
+                                <h2>{{ $post->title }}</h2>
+                                <p>大学名: {{ $post->university_name }}</p>
+                                <p>サークル名: {{ $post->circle_name }}</p>
+                                <p>サークルの種類: {{ $post->circle_type }}</p>
+                                <p>開催場所: {{ $post->event_location }}</p>
+                                <p>締め切り: {{ $post->deadline ? $post->deadline->format('Y-m-d H:i') : '未設定' }}</p>
+                                <p>イベント開催日時: {{ $post->event_date ? $post->event_date->format('Y-m-d H:i') : '未設定' }}</p>
+                                <p>追加情報: {{ $post->free_text }}</p>
+                                @if ($post->user)
+                                    <a href="/chat/{{ $post->user->id }}" class="chat-link">チャットする</a>
+                                @endif
+                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="delete-button" onclick="return confirm('本当に削除しますか？')">削除</button>
+                                </form>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div id="postScreen">
+                        <button id="closeButton">閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -126,5 +156,4 @@
             });
         });
     </script>
-</body>
-</html>
+</x-app-layout>
