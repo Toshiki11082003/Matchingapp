@@ -115,11 +115,13 @@
                                 @if ($post->user)
                                     <a href="/chat/{{ $post->user->id }}" class="chat-link">チャットする</a>
                                 @endif
-                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="delete-button" onclick="return confirm('本当に削除しますか？')">削除</button>
-                                </form>
+                                @if (Auth::id() == $post->user_id)
+                                    <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="delete-button" onclick="return confirm('本当に削除しますか？')">削除</button>
+                                    </form>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -149,7 +151,7 @@
                 '<div><button type="submit" class="button">送信</button></div>' +
                 '</form>';
 
-            postScreen.innerHTML = '<button id="closeButton">閉じる</button>' + formHtml; // Ensure the closeButton is inside postScreen
+            postScreen.innerHTML = formHtml + '<button id="closeButton">閉じる</button>'; // Ensure the closeButton is inside postScreen
             postScreen.style.display = 'block';
             document.getElementById('closeButton').addEventListener('click', function() {
                 postScreen.style.display = 'none';

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
@@ -10,14 +9,10 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-use App\Library\Chat;
-// use App\Models\Chat;
-
 class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    // ※イベントをブロードキャストすると、publicメンバーが送信される。
     public $chat;
 
     /**
@@ -25,7 +20,7 @@ class MessageSent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Chat $chat)
+    public function __construct($chat)
     {
         $this->chat = $chat;
     }
@@ -33,10 +28,10 @@ class MessageSent implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return PrivateChannel
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat');
+        return new PrivateChannel('chat.' . $this->chat->room_id); // 修正: room_id を chat_id に変更
     }
 }
