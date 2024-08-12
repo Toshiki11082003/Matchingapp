@@ -41,7 +41,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="container">
                         @foreach($chats as $chat)
-                            <a class="chat-link" href="{{ route('chat.show', ['roomId' => $chat->id]) }}">
+                            <a class="chat-link" href="{{ route('chat.show', ['chatId' => $chat->id]) }}"
                                 送信したユーザー名：{{$chat->guest->name}}
                             </a>
                         @endforeach

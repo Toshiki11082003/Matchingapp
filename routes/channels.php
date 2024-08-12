@@ -17,6 +17,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('chat', function ($user) {
-    return auth()->check();
+// チャットルームごとの認証を設定
+Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
+    return auth()->check(); // 必要に応じて、特定のユーザーがそのチャットルームにアクセスできるかを確認するロジックを追加
 });

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Room;
@@ -17,6 +18,7 @@ class ChatController extends Controller
             $query->where('owner_id', $myUserId)
                   ->orWhere('guest_id', $myUserId);
         })->get();
+
         return view('chats.rooms')->with(['chats' => $chats]);
     }
 
@@ -42,44 +44,43 @@ class ChatController extends Controller
             $chat->save();
         }
 
-        $messages = Message::where('chat_id', $chat->id)->orderBy('updated_at', 'DESC')->get();
+        $messages = Message::where('chat_id', $chat->id)->orderBy('created_at', 'DESC')->get();
 
         return view('chats.chat')->with(['chat' => $chat, 'messages' => $messages]);
     }
 
     public function sendMessage(Request $request)
-    {
-        $user = auth()->user();
-        $strUserId = $user->id;
-        $strUsername = $user->name;
+{
+    $user = auth()->user();
+    $strUserId = $user->id;
+    $strUsername = $user->name;
 
-        $strMessage = $request->message;
-        $chatId = $request->chat_id;
+    $strMessage = $request->message;
+    $chatId = $request->chat_id;
 
-        // ルームが存在するか確認する
-        $room = Room::find($chatId);
-        if (!$room) {
-            return response()->json(['error' => 'Room not found'], 404);
-        }
-
-        $message = new Message();
-        $message->user_id = $strUserId;
-        $message->body = $strMessage;
-        $message->chat_id = $chatId;
-        $message->save();
-
-        $chatEvent = new \App\Library\Chat();
-        $chatEvent->body = $strMessage;
-        $chatEvent->chat_id = $chatId;
-        $chatEvent->userName = $strUsername;
-        MessageSent::dispatch($chatEvent);
-
-        return response()->json(['message' => $strMessage, 'user'=> $strUsername]);
+    // ルームが存在するか確認する
+    $room = Room::find($chatId);
+    if (!$room) {
+        return response()->json(['error' => 'Room not found'], 404);
     }
 
+    $message = new Message();
+    $message->user_id = $strUserId;
+    $message->body = $strMessage;
+    $message->chat_id = $chatId;
+    $message->save();
+
+    // Pusherイベントの発火
+    event(new MessageSent($message));  // 修正: イベントの発火を確認
+
+    return response()->json(['message' => $strMessage, 'user' => $strUsername]);
+}
     public function show($chatId)
     {
-        $room = Room::with('messages')->findOrFail($chatId);
+        $room = Room::with(['messages' => function($query) {
+            $query->orderBy('created_at', 'asc');
+        }])->findOrFail($chatId);
+
         return view('chats.chat', ['chat' => $room, 'messages' => $room->messages]);
     }
 }

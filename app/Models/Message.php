@@ -9,10 +9,13 @@ class Message extends Model
 {
     use HasFactory;
 
-
-
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'chat_id');
     }
 }
